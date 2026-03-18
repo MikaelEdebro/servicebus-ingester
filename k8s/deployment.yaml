@@ -19,6 +19,10 @@ spec:
     metadata:
       labels:
         app: servicebus-ingester
+        app.kubernetes.io/name: servicebus-ingester
+        app.kubernetes.io/component: server
+        log-source: dcsp-backend
+        team: platform
     spec:
       terminationGracePeriodSeconds: 60
       containers:

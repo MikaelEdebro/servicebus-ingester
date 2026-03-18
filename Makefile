@@ -28,5 +28,5 @@ docker-build:
 	docker build --platform linux/amd64 -t $(IMAGE):$(TAG) .
 
 push: docker-build
-	az acr login --name acrvcedcsp
+# 	az acr login --name acrvcedcsp
 	docker push $(IMAGE):$(TAG)

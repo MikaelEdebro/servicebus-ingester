@@ -3,6 +3,8 @@ package tracing
 import (
 	"context"
 	"fmt"
+	"log/slog"
+	"os"
 
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp"
@@ -17,10 +19,8 @@ func Init(ctx context.Context, serviceName string) (*sdktrace.TracerProvider, er
 		return nil, fmt.Errorf("creating OTLP trace exporter: %w", err)
 	}
 
-	res, err := resource.Merge(
-		resource.Default(),
-		resource.NewWithAttributes(
-			semconv.SchemaURL,
+	res, err := resource.New(ctx,
+		resource.WithAttributes(
 			semconv.ServiceName(serviceName),
 		),
 	)
@@ -34,5 +34,12 @@ func Init(ctx context.Context, serviceName string) (*sdktrace.TracerProvider, er
 	)
 
 	otel.SetTracerProvider(tp)
+
+	endpoint := os.Getenv("OTEL_EXPORTER_OTLP_TRACES_ENDPOINT")
+	if endpoint == "" {
+		endpoint = os.Getenv("OTEL_EXPORTER_OTLP_ENDPOINT")
+	}
+	slog.Info("tracing initialized", "endpoint", endpoint, "service", serviceName)
+
 	return tp, nil
 }
