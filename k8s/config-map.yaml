@@ -10,3 +10,4 @@ data:
   SERVICEBUS_TOPIC: "sb-loadtest-listen"
   SERVICEBUS_SUBSCRIPTION: "go-ingester"
   DATABASE_SCHEMA: "ingestionservicebusingester"
+  SERVICEBUS_SEND_TOPIC: "sb-loadtest-send"

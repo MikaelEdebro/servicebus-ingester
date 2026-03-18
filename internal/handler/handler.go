@@ -42,5 +42,11 @@ func (h *Handler) HandleLoadtestListen(ctx context.Context, msg *azservicebus.Re
 		return fmt.Errorf("inserting message: %w", err)
 	}
 
+	if h.sender != nil {
+		if err := h.sender.SendCloudEvent(ctx, event.Type(), event.Source(), event.Data()); err != nil {
+			return fmt.Errorf("sending response event: %w", err)
+		}
+	}
+
 	return nil
 }
