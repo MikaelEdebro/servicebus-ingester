@@ -9,3 +9,4 @@ data:
   HEALTH_PORT: "8080"
   SERVICEBUS_TOPIC: "sb-loadtest-listen"
   SERVICEBUS_SUBSCRIPTION: "go-ingester"
+  DATABASE_SCHEMA: "ingestionservicebusingester"

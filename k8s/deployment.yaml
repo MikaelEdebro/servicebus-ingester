@@ -19,6 +19,7 @@ spec:
       containers:
         - name: ingester
           image: acrvcedcsp.azurecr.io/experiment/ingestion/go-ingester:latest
+          imagePullPolicy: Always
           envFrom:
             - configMapRef:
                 name: servicebus-ingester-config
