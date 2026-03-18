@@ -65,7 +65,7 @@ func main() {
 		}
 	}()
 
-	consumer := servicebus.NewConsumer(sbClient, cfg.Topic, cfg.Subscription, cfg.BatchSize, cfg.ConsumerCount, h.Handle)
+	consumer := servicebus.NewConsumer(sbClient, cfg.Topic, cfg.Subscription, cfg.BatchSize, cfg.ConsumerCount, h.HandleLoadtestListen)
 
 	slog.Info("starting consumer",
 		"topic", cfg.Topic,

@@ -1,6 +1,6 @@
 module github.com/MikaelEdebro/servicebus-ingester
 
-go 1.25.0
+go 1.24.0
 
 require (
 	github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.13.1

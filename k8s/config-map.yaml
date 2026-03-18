@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: servicebus-ingester-config
+  namespace: experiment
+data:
+  CONSUMER_COUNT: "10"
+  BATCH_SIZE: "20"
+  HEALTH_PORT: "8080"

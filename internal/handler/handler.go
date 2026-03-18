@@ -25,7 +25,7 @@ func New(q *queries.Queries, sender *servicebus.Sender) *Handler {
 	}
 }
 
-func (h *Handler) Handle(ctx context.Context, msg *azservicebus.ReceivedMessage) error {
+func (h *Handler) HandleLoadtestListen(ctx context.Context, msg *azservicebus.ReceivedMessage) error {
 	var event cloudevents.Event
 	if err := json.Unmarshal(msg.Body, &event); err != nil {
 		return fmt.Errorf("unmarshaling cloud event: %w", err)
@@ -37,7 +37,7 @@ func (h *Handler) Handle(ctx context.Context, msg *azservicebus.ReceivedMessage)
 		MessageID: msg.MessageID,
 		EventType: event.Type(),
 		Source:    event.Source(),
-		Body:     msg.Body,
+		Body:      msg.Body,
 	}); err != nil {
 		return fmt.Errorf("inserting message: %w", err)
 	}

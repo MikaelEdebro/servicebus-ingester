@@ -2,8 +2,6 @@ include .env
 export
 
 GOBIN := $(shell go env GOPATH)/bin
-PATH := $(GOBIN):$(PATH)
-SHELL := env PATH=$(PATH) /bin/sh
 
 .PHONY: run build migrate migrate-down sqlc docker-build
 
@@ -14,13 +12,13 @@ build:
 	go build -o bin/ingester ./cmd/ingester
 
 migrate:
-	goose -dir sql/migrations postgres "$(DATABASE_URL)" up
+	$(GOBIN)/goose -dir sql/migrations postgres "$(DATABASE_URL)" up
 
 migrate-down:
-	goose -dir sql/migrations postgres "$(DATABASE_URL)" down
+	$(GOBIN)/goose -dir sql/migrations postgres "$(DATABASE_URL)" down
 
 sqlc:
-	sqlc generate
+	$(GOBIN)/sqlc generate
 
 ACR := acrvcedcsp.azurecr.io
 IMAGE := $(ACR)/experiment/ingestion/go-ingester

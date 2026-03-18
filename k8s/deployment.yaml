@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: servicebus-ingester
+  namespace: experiment
   labels:
     app: servicebus-ingester
 spec:
@@ -17,12 +18,12 @@ spec:
       terminationGracePeriodSeconds: 60
       containers:
         - name: ingester
-          image: servicebus-ingester:latest
+          image: acrvcedcsp.azurecr.io/experiment/ingestion/go-ingester:latest
           envFrom:
             - configMapRef:
                 name: servicebus-ingester-config
             - secretRef:
-                name: servicebus-ingester-secrets
+                name: servicebus-ingester-kv-experiment-config
           ports:
             - name: health
               containerPort: 8080
