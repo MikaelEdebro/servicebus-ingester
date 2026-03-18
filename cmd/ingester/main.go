@@ -14,6 +14,7 @@ import (
 	"github.com/MikaelEdebro/servicebus-ingester/internal/handler"
 	"github.com/MikaelEdebro/servicebus-ingester/internal/health"
 	"github.com/MikaelEdebro/servicebus-ingester/internal/servicebus"
+	"github.com/MikaelEdebro/servicebus-ingester/internal/tracing"
 )
 
 func main() {
@@ -27,6 +28,13 @@ func main() {
 
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGTERM, syscall.SIGINT)
 	defer stop()
+
+	tp, err := tracing.Init(ctx, "servicebus-ingester")
+	if err != nil {
+		slog.Error("initializing tracing", "error", err)
+		os.Exit(1)
+	}
+	defer tp.Shutdown(context.Background())
 
 	pool, err := db.NewPool(ctx, cfg.DatabaseURL, cfg.DatabaseSchema)
 	if err != nil {

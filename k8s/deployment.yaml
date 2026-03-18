@@ -27,6 +27,8 @@ spec:
           imagePullPolicy: Always
           envFrom:
             - configMapRef:
+                name: global-env-config
+            - configMapRef:
                 name: servicebus-ingester-config
             - secretRef:
                 name: servicebus-ingester-kv-experiment-config
