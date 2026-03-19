@@ -13,6 +13,6 @@ type Message struct {
 	MessageID string             `json:"message_id"`
 	EventType string             `json:"event_type"`
 	Source    string             `json:"source"`
-	Body      []byte             `json:"body"`
+	Body      string             `json:"body"`
 	CreatedAt pgtype.Timestamptz `json:"created_at"`
 }

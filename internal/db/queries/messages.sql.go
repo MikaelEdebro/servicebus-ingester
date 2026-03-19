@@ -36,7 +36,7 @@ type InsertMessageParams struct {
 	MessageID string `json:"message_id"`
 	EventType string `json:"event_type"`
 	Source    string `json:"source"`
-	Body      []byte `json:"body"`
+	Body      string `json:"body"`
 }
 
 func (q *Queries) InsertMessage(ctx context.Context, arg InsertMessageParams) error {

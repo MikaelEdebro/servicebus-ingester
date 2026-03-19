@@ -25,6 +25,8 @@ spec:
         team: platform
     spec:
       terminationGracePeriodSeconds: 30
+      nodeSelector:
+        pool_type: general
       containers:
         - name: ingester
           image: acrvcedcsp.azurecr.io/experiment/ingestion/go-ingester:20260319.094200

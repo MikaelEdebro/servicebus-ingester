@@ -57,7 +57,7 @@ func (h *Handler) HandleLoadtestListen(ctx context.Context, msg *azservicebus.Re
 		MessageID: msg.MessageID,
 		EventType: event.Type(),
 		Source:    event.Source(),
-		Body:      msg.Body,
+		Body:      string(msg.Body),
 	})
 	dbSpan.End()
 	if err != nil {
