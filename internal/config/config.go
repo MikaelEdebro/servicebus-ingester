@@ -22,6 +22,7 @@ type Config struct {
 	DBDatabase           string `env:"DB_DATABASE,required"`
 	DBSchema             string `env:"DB_SCHEMA"`
 	DBSSLMode            string `env:"DB_SSL_MODE" envDefault:"require"`
+	DBSimpleProtocol     bool   `env:"DB_SIMPLE_PROTOCOL" envDefault:"false"`
 	DBMaxConns           int    `env:"DB_MAX_CONNS" envDefault:"50"`
 	DBConnIdleTimeMinutes int   `env:"DB_CONNECTION_IDLE_TIME_MINUTES" envDefault:"5"`
 	DBConnLifeTimeMinutes int   `env:"DB_CONNECTION_LIFE_TIME_MINUTES" envDefault:"30"`

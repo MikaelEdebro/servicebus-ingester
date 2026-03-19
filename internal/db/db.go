@@ -17,6 +17,10 @@ func NewPool(ctx context.Context, cfg *config.Config) (*pgxpool.Pool, error) {
 		return nil, err
 	}
 
+	if cfg.DBSimpleProtocol {
+		poolCfg.ConnConfig.DefaultQueryExecMode = pgx.QueryExecModeSimpleProtocol
+	}
+
 	poolCfg.MaxConns = int32(cfg.DBMaxConns)
 	poolCfg.MaxConnIdleTime = time.Duration(cfg.DBConnIdleTimeMinutes) * time.Minute
 	poolCfg.MaxConnLifetime = time.Duration(cfg.DBConnLifeTimeMinutes) * time.Minute
