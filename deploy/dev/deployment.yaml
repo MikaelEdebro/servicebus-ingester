@@ -29,7 +29,7 @@ spec:
         pool_type: general
       containers:
         - name: ingester
-          image: acrvcedcsp.azurecr.io/experiment/ingestion/go-ingester:20260319.094200
+          image: acrvcedcsp.azurecr.io/experiment/ingestion/go-ingester:20260319.094410
           imagePullPolicy: Always
           envFrom:
             - configMapRef:
