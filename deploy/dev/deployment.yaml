@@ -27,7 +27,7 @@ spec:
       terminationGracePeriodSeconds: 30
       containers:
         - name: ingester
-          image: acrvcedcsp.azurecr.io/experiment/ingestion/go-ingester:20260319.080342
+          image: acrvcedcsp.azurecr.io/experiment/ingestion/go-ingester:20260319.085037
           imagePullPolicy: Always
           envFrom:
             - configMapRef:
