@@ -29,7 +29,7 @@ func (q *Queries) GetMessageByID(ctx context.Context, id int64) (Message, error)
 
 const insertMessage = `-- name: InsertMessage :exec
 INSERT INTO messages (message_id, event_type, source, body)
-VALUES ($1, $2, $3, $4)
+VALUES ($1, $2, $3, $4::jsonb)
 `
 
 type InsertMessageParams struct {

@@ -1,6 +1,6 @@
 -- name: InsertMessage :exec
 INSERT INTO messages (message_id, event_type, source, body)
-VALUES (@message_id, @event_type, @source, @body);
+VALUES (@message_id, @event_type, @source, @body::jsonb);
 
 -- name: GetMessageByID :one
 SELECT * FROM messages WHERE id = @id;

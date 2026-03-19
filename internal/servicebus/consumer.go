@@ -71,10 +71,7 @@ func (c *Consumer) receiveLoop(ctx context.Context, id int, receiver *azserviceb
 
 		for _, msg := range messages {
 			if err := c.handler(ctx, msg); err != nil {
-				log.Error("handling message", "error", err, "messageId", msg.MessageID)
-				if abandonErr := receiver.AbandonMessage(ctx, msg, nil); abandonErr != nil {
-					log.Error("abandoning message", "error", abandonErr, "messageId", msg.MessageID)
-				}
+				log.Error("handling message, letting lock expire", "error", err, "messageId", msg.MessageID)
 				continue
 			}
 
