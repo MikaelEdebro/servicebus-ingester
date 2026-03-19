@@ -5,6 +5,8 @@ metadata:
   namespace: experiment
   labels:
     app: servicebus-ingester-go
+  annotations:
+    reloader.stakater.com/auto: "true"
 spec:
   strategy:
     type: RollingUpdate
