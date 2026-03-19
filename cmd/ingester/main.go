@@ -36,7 +36,7 @@ func main() {
 	}
 	defer tp.Shutdown(context.Background())
 
-	pool, err := db.NewPool(ctx, cfg.DatabaseURL, cfg.DatabaseSchema)
+	pool, err := db.NewPool(ctx, cfg)
 	if err != nil {
 		slog.Error("connecting to database", "error", err)
 		os.Exit(1)
