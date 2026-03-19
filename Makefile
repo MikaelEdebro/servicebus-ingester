@@ -23,7 +23,7 @@ sqlc:
 	$(GOBIN)/sqlc generate
 
 ACR := acrvcedcsp.azurecr.io
-IMAGE := $(ACR)/experiment/ingestion/go-ingester
+IMAGE := $(ACR)/experiment/ingestion/servicebus-ingester-go
 TAG := $(shell date +%Y%m%d.%H%M%S)
 
 docker-build:
