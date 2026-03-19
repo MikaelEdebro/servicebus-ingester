@@ -1,10 +1,10 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: servicebus-ingester
+  name: servicebus-ingester-go
   namespace: experiment
   labels:
-    app: servicebus-ingester
+    app: servicebus-ingester-go
 spec:
   strategy:
     type: RollingUpdate
@@ -14,12 +14,12 @@ spec:
   replicas: 2
   selector:
     matchLabels:
-      app: servicebus-ingester
+      app: servicebus-ingester-go
   template:
     metadata:
       labels:
-        app: servicebus-ingester
-        app.kubernetes.io/name: servicebus-ingester
+        app: servicebus-ingester-go
+        app.kubernetes.io/name: servicebus-ingester-go
         app.kubernetes.io/component: server
         log-source: dcsp-backend
         team: platform
@@ -40,9 +40,9 @@ spec:
             - configMapRef:
                 name: global-env-config
             - configMapRef:
-                name: servicebus-ingester-config
+                name: servicebus-ingester-go-config
             - secretRef:
-                name: servicebus-ingester-kv-experiment-config
+                name: servicebus-ingester-go-kv-experiment-config
           ports:
             - name: health
               containerPort: 8080

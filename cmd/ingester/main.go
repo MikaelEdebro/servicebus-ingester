@@ -8,13 +8,13 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/MikaelEdebro/servicebus-ingester/internal/config"
-	"github.com/MikaelEdebro/servicebus-ingester/internal/db"
-	"github.com/MikaelEdebro/servicebus-ingester/internal/db/queries"
-	"github.com/MikaelEdebro/servicebus-ingester/internal/handler"
-	"github.com/MikaelEdebro/servicebus-ingester/internal/health"
-	"github.com/MikaelEdebro/servicebus-ingester/internal/servicebus"
-	"github.com/MikaelEdebro/servicebus-ingester/internal/tracing"
+	"github.com/MikaelEdebro/servicebus-ingester-go/internal/config"
+	"github.com/MikaelEdebro/servicebus-ingester-go/internal/db"
+	"github.com/MikaelEdebro/servicebus-ingester-go/internal/db/queries"
+	"github.com/MikaelEdebro/servicebus-ingester-go/internal/handler"
+	"github.com/MikaelEdebro/servicebus-ingester-go/internal/health"
+	"github.com/MikaelEdebro/servicebus-ingester-go/internal/servicebus"
+	"github.com/MikaelEdebro/servicebus-ingester-go/internal/tracing"
 )
 
 func main() {
@@ -29,7 +29,7 @@ func main() {
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGTERM, syscall.SIGINT)
 	defer stop()
 
-	tp, err := tracing.Init(ctx, "servicebus-ingester")
+	tp, err := tracing.Init(ctx, "servicebus-ingester-go")
 	if err != nil {
 		slog.Error("initializing tracing", "error", err)
 		os.Exit(1)

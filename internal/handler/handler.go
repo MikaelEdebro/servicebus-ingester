@@ -13,11 +13,11 @@ import (
 	"go.opentelemetry.io/otel/codes"
 	"go.opentelemetry.io/otel/trace"
 
-	"github.com/MikaelEdebro/servicebus-ingester/internal/db/queries"
-	"github.com/MikaelEdebro/servicebus-ingester/internal/servicebus"
+	"github.com/MikaelEdebro/servicebus-ingester-go/internal/db/queries"
+	"github.com/MikaelEdebro/servicebus-ingester-go/internal/servicebus"
 )
 
-var tracer = otel.Tracer("servicebus-ingester/handler")
+var tracer = otel.Tracer("servicebus-ingester-go/handler")
 
 type Handler struct {
 	queries *queries.Queries

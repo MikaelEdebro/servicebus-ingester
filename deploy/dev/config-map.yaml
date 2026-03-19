@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: servicebus-ingester-config
+  name: servicebus-ingester-go-config
   namespace: experiment
 data:
   CONSUMER_COUNT: "20"

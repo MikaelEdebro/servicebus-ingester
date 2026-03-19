@@ -1,4 +1,4 @@
-module github.com/MikaelEdebro/servicebus-ingester
+module github.com/MikaelEdebro/servicebus-ingester-go
 
 go 1.25.0
 
