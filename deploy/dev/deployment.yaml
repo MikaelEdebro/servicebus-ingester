@@ -24,7 +24,7 @@ spec:
         log-source: dcsp-backend
         team: platform
     spec:
-      terminationGracePeriodSeconds: 60
+      terminationGracePeriodSeconds: 30
       containers:
         - name: ingester
           image: acrvcedcsp.azurecr.io/experiment/ingestion/go-ingester:latest
