@@ -8,7 +8,8 @@ import (
 	"github.com/Azure/azure-sdk-for-go/sdk/messaging/azservicebus"
 )
 
-type MessageHandler func(ctx context.Context, msg *azservicebus.ReceivedMessage) error
+type SingleMessageHandler func(ctx context.Context, msg *azservicebus.ReceivedMessage) error
+type BatchMessageHandler func(ctx context.Context, receiver *azservicebus.Receiver, messages []*azservicebus.ReceivedMessage) error
 
 type Consumer struct {
 	client       *azservicebus.Client
@@ -16,22 +17,24 @@ type Consumer struct {
 	subscription string
 	batchSize    int
 	concurrency  int
-	handler      MessageHandler
+	strategy     string
+	singleHandler SingleMessageHandler
+	batchHandler  BatchMessageHandler
 }
 
-func NewConsumer(client *azservicebus.Client, topic, subscription string, batchSize, concurrency int, handler MessageHandler) *Consumer {
+func NewConsumer(client *azservicebus.Client, topic, subscription string, batchSize, concurrency int, strategy string, singleHandler SingleMessageHandler, batchHandler BatchMessageHandler) *Consumer {
 	return &Consumer{
-		client:       client,
-		topic:        topic,
-		subscription: subscription,
-		batchSize:    batchSize,
-		concurrency:  concurrency,
-		handler:      handler,
+		client:        client,
+		topic:         topic,
+		subscription:  subscription,
+		batchSize:     batchSize,
+		concurrency:   concurrency,
+		strategy:      strategy,
+		singleHandler: singleHandler,
+		batchHandler:  batchHandler,
 	}
 }
 
-// Run starts N concurrent receive-process loops. Each goroutine receives a batch,
-// then processes messages sequentially — settlement must happen on the same receiver.
 func (c *Consumer) Run(ctx context.Context) error {
 	var wg sync.WaitGroup
 
@@ -69,15 +72,10 @@ func (c *Consumer) receiveLoop(ctx context.Context, id int, receiver *azserviceb
 			continue
 		}
 
-		for _, msg := range messages {
-			if err := c.handler(ctx, msg); err != nil {
-				log.Error("handling message, letting lock expire", "error", err, "messageId", msg.MessageID)
-				continue
-			}
-
-			if err := receiver.CompleteMessage(ctx, msg, nil); err != nil {
-				log.Error("completing message", "error", err, "messageId", msg.MessageID)
-			}
+		if c.strategy == "batch" {
+			c.processBatch(ctx, log, receiver, messages)
+		} else {
+			c.processSingle(ctx, log, receiver, messages)
 		}
 	}
 }

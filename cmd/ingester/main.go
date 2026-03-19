@@ -64,7 +64,7 @@ func main() {
 	}
 
 	q := queries.New(pool)
-	h := handler.New(q, sender)
+	h := handler.New(pool, q, sender)
 
 	healthServer := health.NewServer(cfg.HealthPort, pool)
 	go func() {
@@ -73,13 +73,18 @@ func main() {
 		}
 	}()
 
-	consumer := servicebus.NewConsumer(sbClient, cfg.Topic, cfg.Subscription, cfg.BatchSize, cfg.ConsumerCount, h.HandleLoadtestListen)
+	consumer := servicebus.NewConsumer(
+		sbClient, cfg.Topic, cfg.Subscription,
+		cfg.BatchSize, cfg.ConsumerCount, cfg.Strategy,
+		h.HandleSingle, h.HandleBatch,
+	)
 
 	slog.Info("starting consumer",
 		"topic", cfg.Topic,
 		"subscription", cfg.Subscription,
 		"consumers", cfg.ConsumerCount,
 		"batchSize", cfg.BatchSize,
+		"strategy", cfg.Strategy,
 	)
 
 	if err := consumer.Run(ctx); err != nil {

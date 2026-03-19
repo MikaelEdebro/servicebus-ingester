@@ -13,6 +13,7 @@ type Config struct {
 	Subscription               string `env:"SERVICEBUS_SUBSCRIPTION,required"`
 	ConsumerCount              int    `env:"CONSUMER_COUNT" envDefault:"10"`
 	BatchSize                  int    `env:"BATCH_SIZE" envDefault:"20"`
+	Strategy                   string `env:"SB_STRATEGY" envDefault:"single"`
 	HealthPort                 int    `env:"HEALTH_PORT" envDefault:"8080"`
 
 	DBHost               string `env:"DB_HOST,required"`
