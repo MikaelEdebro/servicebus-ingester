@@ -8,48 +8,51 @@ import (
 	"github.com/Azure/azure-sdk-for-go/sdk/messaging/azservicebus"
 )
 
-type SingleMessageHandler func(ctx context.Context, msg *azservicebus.ReceivedMessage) error
-type BatchMessageHandler func(ctx context.Context, receiver *azservicebus.Receiver, messages []*azservicebus.ReceivedMessage) error
-
-type Consumer struct {
-	client       *azservicebus.Client
-	topic        string
-	subscription string
-	batchSize    int
-	concurrency  int
-	strategy     string
-	singleHandler SingleMessageHandler
-	batchHandler  BatchMessageHandler
+type TopicConfig struct {
+	Topic        string
+	Subscription string
+	Strategy     string
 }
 
-func NewConsumer(client *azservicebus.Client, topic, subscription string, batchSize, concurrency int, strategy string, singleHandler SingleMessageHandler, batchHandler BatchMessageHandler) *Consumer {
+type DispatchFunc func(ctx context.Context, strategy string, receiver *azservicebus.Receiver, messages []*azservicebus.ReceivedMessage)
+
+type Consumer struct {
+	client    *azservicebus.Client
+	batchSize int
+	concurrency int
+	topics    []TopicConfig
+	dispatch  DispatchFunc
+}
+
+func NewConsumer(client *azservicebus.Client, batchSize, concurrency int, topics []TopicConfig, dispatch DispatchFunc) *Consumer {
 	return &Consumer{
-		client:        client,
-		topic:         topic,
-		subscription:  subscription,
-		batchSize:     batchSize,
-		concurrency:   concurrency,
-		strategy:      strategy,
-		singleHandler: singleHandler,
-		batchHandler:  batchHandler,
+		client:      client,
+		batchSize:   batchSize,
+		concurrency: concurrency,
+		topics:      topics,
+		dispatch:    dispatch,
 	}
 }
 
 func (c *Consumer) Run(ctx context.Context) error {
 	var wg sync.WaitGroup
 
-	for i := range c.concurrency {
-		receiver, err := c.client.NewReceiverForSubscription(c.topic, c.subscription, nil)
-		if err != nil {
-			return err
-		}
+	for _, tc := range c.topics {
+		for i := range c.concurrency {
+			receiver, err := c.client.NewReceiverForSubscription(tc.Topic, tc.Subscription, nil)
+			if err != nil {
+				return err
+			}
 
-		wg.Add(1)
-		go func(id int, r *azservicebus.Receiver) {
-			defer wg.Done()
-			defer r.Close(context.Background())
-			c.receiveLoop(ctx, id, r)
-		}(i, receiver)
+			slog.Info("receiver started", "consumer", i, "topic", tc.Topic, "subscription", tc.Subscription, "strategy", tc.Strategy)
+
+			wg.Add(1)
+			go func(id int, r *azservicebus.Receiver, cfg TopicConfig) {
+				defer wg.Done()
+				defer r.Close(context.Background())
+				c.receiveLoop(ctx, id, r, cfg)
+			}(i, receiver, tc)
+		}
 	}
 
 	<-ctx.Done()
@@ -59,8 +62,8 @@ func (c *Consumer) Run(ctx context.Context) error {
 	return nil
 }
 
-func (c *Consumer) receiveLoop(ctx context.Context, id int, receiver *azservicebus.Receiver) {
-	log := slog.With("consumer", id)
+func (c *Consumer) receiveLoop(ctx context.Context, id int, receiver *azservicebus.Receiver, cfg TopicConfig) {
+	log := slog.With("consumer", id, "topic", cfg.Topic, "subscription", cfg.Subscription)
 
 	for {
 		messages, err := receiver.ReceiveMessages(ctx, c.batchSize, nil)
@@ -72,10 +75,6 @@ func (c *Consumer) receiveLoop(ctx context.Context, id int, receiver *azserviceb
 			continue
 		}
 
-		if c.strategy == "batch" {
-			c.processBatch(ctx, log, receiver, messages)
-		} else {
-			c.processSingle(ctx, log, receiver, messages)
-		}
+		c.dispatch(ctx, cfg.Strategy, receiver, messages)
 	}
 }

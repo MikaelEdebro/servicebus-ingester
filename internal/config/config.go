@@ -9,27 +9,24 @@ import (
 type Config struct {
 	ServiceBusConnectionString string `env:"SERVICEBUS_CONNECTION_STRING"`
 	ServiceBusNamespace        string `env:"SERVICEBUS_NAMESPACE"`
-	Topic                      string `env:"SERVICEBUS_TOPIC,required"`
-	Subscription               string `env:"SERVICEBUS_SUBSCRIPTION,required"`
-	ConsumerCount              int    `env:"CONSUMER_COUNT" envDefault:"10"`
-	BatchSize                  int    `env:"BATCH_SIZE" envDefault:"20"`
-	Strategy                   string `env:"SB_STRATEGY" envDefault:"single"`
+	ConsumerCount              int    `env:"SB_CONSUMER_COUNT" envDefault:"10"`
+	BatchSize                  int    `env:"SB_BATCH_SIZE" envDefault:"20"`
 	HealthPort                 int    `env:"HEALTH_PORT" envDefault:"8080"`
 
-	DBHost               string `env:"DB_HOST,required"`
-	DBUser               string `env:"DB_USER,required"`
-	DBPassword           string `env:"DB_PASSWORD,required"`
-	DBPort               int    `env:"DB_PORT" envDefault:"5432"`
-	DBDatabase           string `env:"DB_DATABASE,required"`
-	DBSchema             string `env:"DB_SCHEMA"`
-	DBSSLMode            string `env:"DB_SSL_MODE" envDefault:"require"`
-	DBSimpleProtocol     bool   `env:"DB_SIMPLE_PROTOCOL" envDefault:"false"`
-	DBMaxConns           int    `env:"DB_MAX_CONNS" envDefault:"50"`
-	DBConnIdleTimeMinutes int   `env:"DB_CONNECTION_IDLE_TIME_MINUTES" envDefault:"5"`
-	DBConnLifeTimeMinutes int   `env:"DB_CONNECTION_LIFE_TIME_MINUTES" envDefault:"30"`
+	DBHost                string `env:"DB_HOST,required"`
+	DBUser                string `env:"DB_USER,required"`
+	DBPassword            string `env:"DB_PASSWORD,required"`
+	DBPort                int    `env:"DB_PORT" envDefault:"5432"`
+	DBDatabase            string `env:"DB_DATABASE,required"`
+	DBSchema              string `env:"DB_SCHEMA"`
+	DBSSLMode             string `env:"DB_SSL_MODE" envDefault:"require"`
+	DBSimpleProtocol      bool   `env:"DB_SIMPLE_PROTOCOL" envDefault:"false"`
+	DBMaxConns            int    `env:"DB_MAX_CONNS" envDefault:"50"`
+	DBConnIdleTimeMinutes int    `env:"DB_CONNECTION_IDLE_TIME_MINUTES" envDefault:"5"`
+	DBConnLifeTimeMinutes int    `env:"DB_CONNECTION_LIFE_TIME_MINUTES" envDefault:"30"`
 
-	SendTopic string `env:"SERVICEBUS_SEND_TOPIC"`
-	SendQueue string `env:"SERVICEBUS_SEND_QUEUE"`
+	SendTopic string `env:"SB_SEND_TOPIC"`
+	SendQueue string `env:"SB_SEND_QUEUE"`
 }
 
 func (c *Config) DatabaseURL() string {

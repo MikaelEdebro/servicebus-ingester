@@ -1,0 +1,8 @@
+{
+  "userId": "user-9381",
+  "email": "jane.doe@example.com",
+  "displayName": "Jane Doe",
+  "role": "operator",
+  "updatedFields": ["email", "displayName"],
+  "timestamp": "2026-03-20T14:22:05Z"
+}

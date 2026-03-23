@@ -4,11 +4,8 @@ metadata:
   name: servicebus-ingester-go-config
   namespace: experiment
 data:
-  CONSUMER_COUNT: "20"
-  BATCH_SIZE: "100"
   HEALTH_PORT: "8080"
-  SERVICEBUS_TOPIC: "sb-loadtest-listen"
-  SERVICEBUS_SUBSCRIPTION: "go-ingester"
+
   DB_USER: "ingestionservicebusingester"
   DB_PORT: "5432"
   DB_DATABASE: "vce_experiment_ingestion_servicebusingester"
@@ -17,5 +14,15 @@ data:
   DB_MAX_CONNS: "20"
   DB_CONNECTION_IDLE_TIME_MINUTES: "5"
   DB_CONNECTION_LIFE_TIME_MINUTES: "30"
-  SB_STRATEGY: "batch"
-  SERVICEBUS_SEND_TOPIC: "sb-loadtest-send"
+
+  SB_CONSUMER_COUNT: "20"
+  SB_BATCH_SIZE: "100"
+  SB_SEND_TOPIC: "sb-loadtest-send"
+
+  SB_MACHINE_LOCATION_TOPIC: "sb-loadtest-listen"
+  SB_MACHINE_LOCATION_SUBSCRIPTION: "go-ingester"
+  SB_MACHINE_LOCATION_STRATEGY: "batch"
+
+  SB_USER_UPDATED_TOPIC: "sb-loadtest-listen"
+  SB_USER_UPDATED_SUBSCRIPTION: "go-ingester"
+  SB_USER_UPDATED_STRATEGY: "single"

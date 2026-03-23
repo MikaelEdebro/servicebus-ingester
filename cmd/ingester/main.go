@@ -15,6 +15,8 @@ import (
 	"github.com/MikaelEdebro/servicebus-ingester-go/internal/health"
 	"github.com/MikaelEdebro/servicebus-ingester-go/internal/servicebus"
 	"github.com/MikaelEdebro/servicebus-ingester-go/internal/tracing"
+
+	"github.com/Azure/azure-sdk-for-go/sdk/messaging/azservicebus"
 )
 
 func main() {
@@ -64,7 +66,27 @@ func main() {
 	}
 
 	q := queries.New(pool)
-	h := handler.New(pool, q, sender)
+
+	dispatcher := handler.NewDispatcher([]handler.EventHandler{
+		handler.NewMachineLocationEventHandler(pool, q, sender),
+		handler.NewUserUpdatedEventHandler(),
+	})
+
+	// Build unique topic configs from handlers
+	seen := make(map[string]bool)
+	var topics []servicebus.TopicConfig
+	for _, h := range dispatcher.Handlers() {
+		key := h.Topic() + "/" + h.Subscription()
+		if seen[key] {
+			continue
+		}
+		seen[key] = true
+		topics = append(topics, servicebus.TopicConfig{
+			Topic:        h.Topic(),
+			Subscription: h.Subscription(),
+			Strategy:     h.Strategy(),
+		})
+	}
 
 	healthServer := health.NewServer(cfg.HealthPort, pool)
 	go func() {
@@ -74,17 +96,20 @@ func main() {
 	}()
 
 	consumer := servicebus.NewConsumer(
-		sbClient, cfg.Topic, cfg.Subscription,
-		cfg.BatchSize, cfg.ConsumerCount, cfg.Strategy,
-		h.HandleSingle, h.HandleBatch,
+		sbClient, cfg.BatchSize, cfg.ConsumerCount, topics,
+		func(ctx context.Context, strategy string, receiver *azservicebus.Receiver, messages []*azservicebus.ReceivedMessage) {
+			if strategy == "batch" {
+				dispatcher.DispatchBatch(ctx, receiver, messages)
+			} else {
+				dispatcher.DispatchSingle(ctx, receiver, messages)
+			}
+		},
 	)
 
 	slog.Info("starting consumer",
-		"topic", cfg.Topic,
-		"subscription", cfg.Subscription,
 		"consumers", cfg.ConsumerCount,
 		"batchSize", cfg.BatchSize,
-		"strategy", cfg.Strategy,
+		"topics", len(topics),
 	)
 
 	if err := consumer.Run(ctx); err != nil {
